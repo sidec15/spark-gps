@@ -126,6 +126,10 @@ public class Main {
                 .load(filteredFcdPath)
                 ;
         
+        int nPartitions = filteredFcdDF.rdd().getNumPartitions();
+        System.out.println(String.format("Set the spark property spark.sql.shuffle.partitions=%d", nPartitions));
+        sparkSession.sqlContext().sql(String.format("set spark.sql.shuffle.partitions=%d", nPartitions));
+        
         Dataset<Trajectory> trajectoriesDS = filteredFcdDF.select(COL_ID, COL_TS, COL_LON, COL_LAT)
         .map(row -> new GpsPoint(row.getString(row.fieldIndex(COL_ID))
                              , row.getLong(row.fieldIndex(COL_TS)) / 1000
