@@ -26,9 +26,10 @@ public class MainTest extends TestWithSparkSession {
         String output = "target/test/output";
         String format  = "json";
         String bbox = "-180,-90,180,90";
+        String nRepetitions = "1";
         String local = "local";
         
-        String[] args = new String[] {input,output,format,bbox,local};
+        String[] args = new String[] {input,output,format,bbox,nRepetitions,local};
         
         Main.main(args);
         

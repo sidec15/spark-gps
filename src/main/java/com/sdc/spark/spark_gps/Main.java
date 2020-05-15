@@ -42,10 +42,11 @@ public class Main {
             String baseOutputPath = args[1];
             String outputFormat = args[2];
             String bboxString = args[3]; // we expect a bbox in the following format: "minX,minY,maxX,maxY"
+            int nRepetition = Integer.parseInt(args[4]);
             
             boolean isLocalRun = false;
-            if(args.length > 4) {
-                isLocalRun = args[4].equals("local");
+            if(args.length > 5) {
+                isLocalRun = args[5].equals("local");
             }
             
             BoundingBox bbox = BoundingBox.parse(bboxString);
@@ -64,9 +65,10 @@ public class Main {
             System.out.println(bbox);
             
             
-            filterFcd(sparkSession, javaSparkContext, fcdInputPath, baseOutputPath, outputFormat, bbox);
-            
-            createTrajectories(sparkSession, baseOutputPath, outputFormat);
+            for(int i = 0; i < nRepetition; i++) {
+                System.out.println(String.format("> Repetion: %d", (i+1)));
+                doJob(sparkSession, javaSparkContext, fcdInputPath, baseOutputPath, outputFormat, bbox);
+            }
             
         }catch (Exception e) {
             e.printStackTrace();
@@ -82,6 +84,32 @@ public class Main {
             }
         }
 
+    }
+
+    /**
+     * @param sparkSession
+     * @param javaSparkContext
+     * @param fcdInputPath
+     * @param baseOutputPath
+     * @param outputFormat
+     * @param bbox
+     */
+    private static void doJob(SparkSession sparkSession, JavaSparkContext javaSparkContext, String fcdInputPath, String baseOutputPath,
+            String outputFormat, BoundingBox bbox) {
+
+        Dataset<Row> fcdDF = sparkSession.read()
+                .option("header", "true")
+                .option("inferSchema", "true")
+                .csv(fcdInputPath)
+                ;
+        
+        int nPartitions = fcdDF.rdd().getNumPartitions();
+        System.out.println(String.format("Set the spark property spark.sql.shuffle.partitions=%d", nPartitions));
+        sparkSession.sqlContext().sql(String.format("set spark.sql.shuffle.partitions=%d", nPartitions));
+        
+        filterFcd(sparkSession, javaSparkContext, fcdDF, fcdInputPath, baseOutputPath, outputFormat, bbox);
+        
+        createTrajectories(sparkSession, baseOutputPath, outputFormat);
     }
 
     /**
@@ -142,22 +170,12 @@ public class Main {
         .format(outputFormat).save(outputPath);
     }
 
-    /**
-     * @param sparkSession
-     * @param javaSparkContext
-     * @param fcdInputPath
-     * @param baseOutputPath
-     * @param outputFormat
-     * @param bbox
-     */
-    private static void filterFcd(SparkSession sparkSession, JavaSparkContext javaSparkContext, String fcdInputPath, String baseOutputPath,
+    private static void filterFcd(SparkSession sparkSession, JavaSparkContext javaSparkContext
+            , Dataset<Row> fcdDF
+            , String fcdInputPath, String baseOutputPath,
             String outputFormat, BoundingBox bbox) {
 
-        Dataset<Row> fcdDF = sparkSession.read()
-        .option("header", "true")
-        .option("inferSchema", "true")
-        .csv(fcdInputPath)
-        ;
+
         Broadcast<BoundingBox> bbocBC = javaSparkContext.broadcast(bbox);
         Dataset<Row> filteredFcdDF = fcdDF.filter(r -> {
            
