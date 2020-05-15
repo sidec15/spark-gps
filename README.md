@@ -1,2 +1,2 @@
 # spark-gps
-Spark java gps information manipulation
+Spark java application to manipulate gps data
