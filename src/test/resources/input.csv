@@ -1,0 +1,17 @@
+otonomo_id,time,latitude,longitude
+device_1,0,0.0,0.0
+device_1,1000,0.0,0.0
+device_1,2000,0.0,0.0
+device_1,3000,0.0,0.0
+device_1,350000,0.0,0.0
+device_1,351000,0.0,0.0
+device_1,352000,0.0,0.0
+device_1,353000,0.0,0.0
+device_2,0,0.0,0.0
+device_2,1000,0.0,0.0
+device_2,2000,0.0,0.0
+device_2,3000,0.0,0.0
+device_2,350000,0.0,0.0
+device_2,351000,0.0,0.0
+device_2,352000,0.0,0.0
+device_2,353000,0.0,0.0
