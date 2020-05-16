@@ -42,7 +42,7 @@ public class Main {
             String baseOutputPath = args[1];
             String outputFormat = args[2];
             String bboxString = args[3]; // we expect a bbox in the following format: "minX,minY,maxX,maxY"
-            int nRepetition = Integer.parseInt(args[4]);
+            int nRepetitions = Integer.parseInt(args[4]);
             
             boolean isLocalRun = false;
             if(args.length > 5) {
@@ -65,7 +65,7 @@ public class Main {
             System.out.println(bbox);
             
             
-            for(int i = 0; i < nRepetition; i++) {
+            for(int i = 0; i < nRepetitions; i++) {
                 System.out.println(String.format("> Repetion: %d", (i+1)));
                 doJob(sparkSession, javaSparkContext, fcdInputPath, baseOutputPath, outputFormat, bbox);
             }
