@@ -11,7 +11,7 @@
         <spark-jars-scope>provided</spark-jars-scope>
         <junit.version>4.12</junit.version>
         <commons-lang3.version>3.5</commons-lang3.version>
-        <commons-io.version>2.5</commons-io.version>    
+        <commons-io.version>2.7</commons-io.version>    
         <hamcrest.version>1.3</hamcrest.version>    
     </properties>
 
